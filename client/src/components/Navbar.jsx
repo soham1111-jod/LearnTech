@@ -10,7 +10,7 @@ const navLinks = [
   { name: 'Live Projects', path: '/student-projects' },
   { name: 'Playlists', path: '/playlists' },
   { name: 'About', path: '/about' },
-  ...(isAdmin ? [{ name: 'Admin Panel', path: '/admin/projects' }] : []),
+  ...(isAdmin ? [{ name: 'Admin Panel', path: '/admin' }] : []),
 ];
 
 export default function Navbar() {

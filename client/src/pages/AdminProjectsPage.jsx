@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { FaCheckCircle, FaTrashAlt, FaHourglassHalf, FaSignOutAlt, FaLock } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { FaCheckCircle, FaTrashAlt, FaHourglassHalf, FaSignOutAlt } from 'react-icons/fa';
 
 const PAGE_SIZE = 10;
 const TOKEN_KEY = 'admin_token';
@@ -21,19 +22,23 @@ function ConfirmModal({ open, onClose, onConfirm, action, projectTitle }) {
 }
 
 function AdminProjectsPage() {
+  const navigate = useNavigate();
   const [pendingProjects, setPendingProjects] = useState([]);
   const [approvedProjects, setApprovedProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY) || '');
-  const [tokenInput, setTokenInput] = useState('');
-  const [authError, setAuthError] = useState('');
+  const [token, setToken] = useState(() => localStorage.getItem("Login") || '');
   const observer = useRef();
-
-  // Add modal state
   const [modal, setModal] = useState({ open: false, action: '', id: '', type: '', title: '' });
+
+  // Redirect to /admin if not logged in
+  useEffect(() => {
+    if (!token) {
+      navigate('/admin');
+    }
+  }, [token, navigate]);
 
   // Fetch pending projects
   const fetchPendingProjects = useCallback(async (pageNum, adminToken) => {
@@ -44,10 +49,10 @@ function AdminProjectsPage() {
         headers: { Authorization: `Bearer ${adminToken}` },
       });
       if (res.status === 401) {
-        setAuthError('Unauthorized: Invalid token');
         setToken('');
         localStorage.removeItem(TOKEN_KEY);
         setLoading(false);
+        navigate('/admin', { replace: true });
         return;
       }
       const data = await res.json();
@@ -61,7 +66,7 @@ function AdminProjectsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [navigate]);
 
   // Fetch approved projects
   const fetchApprovedProjects = useCallback(async (adminToken) => {
@@ -71,9 +76,9 @@ function AdminProjectsPage() {
         headers: { Authorization: `Bearer ${adminToken}` },
       });
       if (res.status === 401) {
-        setAuthError('Unauthorized: Invalid token');
         setToken('');
         localStorage.removeItem(TOKEN_KEY);
+        navigate('/admin', { replace: true });
         return;
       }
       const data = await res.json();
@@ -81,7 +86,7 @@ function AdminProjectsPage() {
     } catch (err) {
       setError(err.message);
     }
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     if (token) {
@@ -89,7 +94,7 @@ function AdminProjectsPage() {
       fetchApprovedProjects(token);
     }
     // eslint-disable-next-line
-  }, [page, token]);
+  }, [page, token, fetchPendingProjects, fetchApprovedProjects]);
 
   const lastProjectRef = useCallback(
     (node) => {
@@ -113,22 +118,20 @@ function AdminProjectsPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.status === 401) {
-        setAuthError('Unauthorized: Invalid token');
         setToken('');
         localStorage.removeItem(TOKEN_KEY);
+        navigate('/admin', { replace: true });
         return;
       }
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to approve');
       setPendingProjects((prev) => prev.filter((p) => p._id !== id));
-      // Optionally, refetch approved projects
       fetchApprovedProjects(token);
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Replace handleDelete to use modal
   const handleDelete = (id, type, title) => {
     setModal({ open: true, action: 'delete', id, type, title });
   };
@@ -140,10 +143,10 @@ function AdminProjectsPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.status === 401) {
-        setAuthError('Unauthorized: Invalid token');
         setToken('');
         localStorage.removeItem(TOKEN_KEY);
         setModal({ open: false, action: '', id: '', type: '', title: '' });
+        navigate('/admin', { replace: true });
         return;
       }
       const data = await res.json();
@@ -160,53 +163,14 @@ function AdminProjectsPage() {
     }
   };
 
-  const handleTokenSubmit = (e) => {
-    e.preventDefault();
-    setAuthError('');
-    if (!tokenInput.trim()) {
-      setAuthError('Please enter the admin token.');
-      return;
-    }
-    setToken(tokenInput.trim());
-    localStorage.setItem(TOKEN_KEY, tokenInput.trim());
-    setPage(1);
-    setPendingProjects([]);
-    setApprovedProjects([]);
-  };
-
   const handleLogout = () => {
     setToken('');
-    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem("Login");
     setPendingProjects([]);
     setApprovedProjects([]);
     setPage(1);
-    setAuthError('');
+    navigate('/admin', { replace: false });
   };
-
-  if (!token) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-pink-50 px-4">
-        <div className="max-w-md w-full p-8 bg-white/90 rounded-2xl shadow-2xl flex flex-col items-center animate-fade-in">
-          <FaLock className="text-4xl text-indigo-500 mb-2" />
-          <h1 className="text-2xl font-bold mb-4">Admin Panel Login</h1>
-          <form onSubmit={handleTokenSubmit} className="w-full">
-            <label htmlFor="admin-token" className="block font-medium mb-2">Enter Admin Token</label>
-            <input
-              id="admin-token"
-              type="password"
-              value={tokenInput}
-              onChange={e => setTokenInput(e.target.value)}
-              className="w-full border rounded-lg p-2 mb-4 focus:ring-2 focus:ring-indigo-400 outline-none transition"
-              autoFocus
-              required
-            />
-            {authError && <div className="text-red-600 mb-2" role="alert">{authError}</div>}
-            <button type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded-lg w-full font-semibold hover:bg-indigo-700 transition">Login</button>
-          </form>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-pink-50 px-2 py-6 animate-fade-in">

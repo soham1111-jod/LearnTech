@@ -11,6 +11,7 @@ const PlaylistsPage = lazy(() => import("./pages/PlaylistsPage"));
 const PlaylistDetailPage = lazy(() => import("./pages/PlaylistDetailPage"));
 const ProjectSubmissionPage = lazy(() => import("./pages/ProjectSubmissionPage"));
 const AdminProjectsPage = lazy(() => import("./pages/AdminProjectsPage"));
+const AdminLoginPage = lazy(() => import("./pages/AdminLoginPage"));
 const StudentProjectsPage = lazy(() => import("./pages/StudentProjectsPage"));
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/playlists/:playlistId" element={<PlaylistDetailPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/submit-project" element={<ProjectSubmissionPage />} />
+          <Route path="/admin" element={<AdminLoginPage />} />
           <Route path="/admin/projects" element={<AdminProjectsPage />} />
           <Route path="/student-projects" element={<StudentProjectsPage />} />
         </Routes>
