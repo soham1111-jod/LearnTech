@@ -1,0 +1,11 @@
+flask
+flask-cors
+pymongo
+dotenv
+youtube-transcript-api
+requests
+google-api-python-client
+isodate 
+python-dotenv
+marshmallow 
+gunicorn

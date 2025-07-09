@@ -1,0 +1,106 @@
+import React, { useState } from 'react';
+import axios from 'axios';
+
+const initialState = {
+  title: '',
+  description: '',
+  tech_stack: '',
+  github_url: '',
+  demo_url: '',
+  linkedin: '',
+};
+
+function ProjectSubmissionPage() {
+  const [form, setForm] = useState(initialState);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validate = () => {
+    if (!form.title || !form.description || !form.tech_stack || !form.github_url || !form.demo_url || !form.linkedin) {
+      setError('All fields are required.');
+      return false;
+    }
+    const urlPattern = /^https?:\/\//;
+    if (!urlPattern.test(form.github_url) || !urlPattern.test(form.demo_url) || !urlPattern.test(form.linkedin)) {
+      setError('Please enter valid URLs.');
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    if (!validate()) return;
+    setLoading(true);
+    try {
+      const res = await axios.post('http://127.0.0.1:5000/api/projects/submit', {
+        ...form,
+        tech_stack: form.tech_stack.split(',').map((t) => t.trim()),
+      });
+      setSuccess('Project submitted for review!');
+      setForm(initialState);
+    } catch (err) {
+      setError(
+        err.response?.data?.error ||
+        err.message ||
+        'Submission failed'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-pink-50 py-10 animate-fade-in">
+      <div className="w-full max-w-2xl bg-white/90 rounded-2xl shadow-2xl p-8 border border-white/30">
+        <div className="flex flex-col items-center mb-6">
+          <span className="text-4xl mb-2" aria-hidden>🚀</span>
+          <h1 className="text-2xl font-bold mb-1">Submit Your Project</h1>
+          <p className="text-gray-600 text-center mb-2">Share your work with the community! Your project will be reviewed by an admin before going live.</p>
+        </div>
+        <form onSubmit={handleSubmit} aria-label="Project Submission Form" className="space-y-4">
+          <div>
+            <label htmlFor="title" className="block font-medium mb-1">Title</label>
+            <input id="title" name="title" value={form.title} onChange={handleChange} required className="w-full border rounded p-2 focus:ring-2 focus:ring-indigo-400" />
+          </div>
+          <div>
+            <label htmlFor="description" className="block font-medium mb-1">Description</label>
+            <textarea id="description" name="description" value={form.description} onChange={handleChange} required className="w-full border rounded p-2 focus:ring-2 focus:ring-indigo-400" rows={3} />
+          </div>
+          <div>
+            <label htmlFor="tech_stack" className="block font-medium mb-1">Tech Stack <span className="text-xs">(comma separated)</span></label>
+            <input id="tech_stack" name="tech_stack" value={form.tech_stack} onChange={handleChange} required className="w-full border rounded p-2 focus:ring-2 focus:ring-indigo-400" aria-describedby="techStackHelp" />
+            <span id="techStackHelp" className="text-xs text-gray-500">e.g. React, Node.js, MongoDB</span>
+          </div>
+          <div>
+            <label htmlFor="github_url" className="block font-medium mb-1">GitHub URL</label>
+            <input id="github_url" name="github_url" value={form.github_url} onChange={handleChange} required className="w-full border rounded p-2 focus:ring-2 focus:ring-indigo-400" type="url" />
+          </div>
+          <div>
+            <label htmlFor="demo_url" className="block font-medium mb-1">Demo URL</label>
+            <input id="demo_url" name="demo_url" value={form.demo_url} onChange={handleChange} required className="w-full border rounded p-2 focus:ring-2 focus:ring-indigo-400" type="url" />
+          </div>
+          <div>
+            <label htmlFor="linkedin" className="block font-medium mb-1">LinkedIn Profile</label>
+            <input id="linkedin" name="linkedin" value={form.linkedin} onChange={handleChange} required className="w-full border rounded p-2 focus:ring-2 focus:ring-indigo-400" type="url" />
+          </div>
+          {error && <div className="text-red-600 mb-2 text-center font-semibold animate-fade-in" role="alert">{error}</div>}
+          {success && <div className="text-green-600 mb-2 text-center font-semibold animate-fade-in" role="status">{success}</div>}
+          <button type="submit" className="w-full bg-blue-600 text-white px-4 py-2 rounded font-semibold shadow hover:bg-blue-700 transition-all disabled:opacity-50" disabled={loading} aria-busy={loading}>
+            {loading ? 'Submitting...' : 'Submit'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default ProjectSubmissionPage; 
