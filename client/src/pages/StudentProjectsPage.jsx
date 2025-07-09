@@ -15,7 +15,7 @@ export default function StudentProjectsPage() {
         setLoading(false);
       })
       .catch(() => {
-        setError('Failed to load student projects.');
+        setError('No Projects');
         setLoading(false);
       });
   }, []);
