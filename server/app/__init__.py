@@ -11,7 +11,7 @@ import os
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('config.Config')
-    CORS(app, origins=["https://learn-tech-brown.vercel.app/"])
+    CORS(app, origins=["https://learn-tech-brown.vercel.app"])
 
     # Initialize MongoDB
     init_mongo(app)
