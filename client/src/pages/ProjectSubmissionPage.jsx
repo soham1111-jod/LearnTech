@@ -9,7 +9,7 @@ const initialState = {
   demo_url: '',
   linkedin: '',
 };
-
+const API_URL = import.meta.env.VITE_API_URL;
 function ProjectSubmissionPage() {
   const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
@@ -41,7 +41,7 @@ function ProjectSubmissionPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const res = await axios.post('http://127.0.0.1:5000/api/projects/submit', {
+      const res = await axios.post(`{API_URL}/api/projects/submit`, {
         ...form,
         tech_stack: form.tech_stack.split(',').map((t) => t.trim()),
       });
