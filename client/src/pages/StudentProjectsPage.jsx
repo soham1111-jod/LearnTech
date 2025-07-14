@@ -8,7 +8,7 @@ export default function StudentProjectsPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/api/projects/approved')
+    fetch(`${import.meta.env.VITE_API_URL}/api/projects/approved`)
       .then(res => res.json())
       .then(data => {
         setProjects(data);
