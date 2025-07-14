@@ -5,7 +5,8 @@ on:
   workflow_dispatch:
   # Schedule every 3 days at 7 AM UTC
   schedule:
-    - cron: '0 7 */3 * *'
+  - cron: '0 7 */3 * *'
+
 
 jobs:
   run-ingestion:

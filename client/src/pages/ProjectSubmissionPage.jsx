@@ -117,7 +117,7 @@ const initialState = {
   demo_url: '',
   linkedin: '',
 };
-
+const API_URL = import.meta.env.VITE_API_URL;
 function ProjectSubmissionPage() {
   const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
