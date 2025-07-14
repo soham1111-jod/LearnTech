@@ -9,7 +9,8 @@ export default function ProjectsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${API_URL}/projects`)
+    console.log(API_URL)
+    axios.get(`${import.meta.env.VITE_API_URL}/projects`)
       .then(res => {
         setProjects(res.data);
         setLoading(false);

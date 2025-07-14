@@ -5,6 +5,7 @@ import VideoCard from '../components/VideoCard';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+
 export default function PlaylistDetailPage() {
   const { playlistId } = useParams();
   const [videos, setVideos] = useState([]);
@@ -13,6 +14,7 @@ export default function PlaylistDetailPage() {
 
   useEffect(() => {
     setLoading(true);
+    
     axios.get(`${API_URL}/videos?playlistId=${playlistId}`)
       .then(res => {
         setVideos(res.data);

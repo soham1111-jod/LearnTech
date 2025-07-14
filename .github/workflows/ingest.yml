@@ -1,0 +1,42 @@
+name: Ingest and Summarize
+
+on:
+  # Allow manual triggering
+  workflow_dispatch:
+  # Schedule every 3 days at 7 AM UTC
+  schedule:
+    - cron: '0 7 */3 * *'
+
+jobs:
+  run-ingestion:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server
+
+    env:
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      CHUNK_SIZE: 3000
+      BATCH_SIZE: 2
+      FLASK_APP: run.py
+      FLASK_ENV: production
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run ingestion command
+        run: |
+          flask ingest_and_summarize

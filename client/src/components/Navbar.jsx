@@ -1,6 +1,8 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import config from '../data/config.json';
+import logo from '../assets/LTlogo.png';
+
 
 const isAdmin = !!localStorage.getItem('admin_token'); 
 const navLinks = [
@@ -42,9 +44,12 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-18">
           {/* Logo and Site Name */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg group-hover:shadow-indigo-500/25 transition-all duration-300">
-              <span className="text-white font-bold text-lg">LT</span>
-            </div>
+            <img
+              src={logo}
+              alt="LearnTech Logo"
+              className="w-10 h-10 rounded-xl shadow-lg group-hover:shadow-indigo-500/25 transition-all duration-300 object-cover "
+              // style={{ background: 'linear-gradient(135deg, #6366f1 0%, #a21caf 50%, #ec4899 100%)' }}
+            />
             <span className="text-2xl font-extrabold text-white tracking-tight bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent drop-shadow-lg">
               LearnTech
             </span>

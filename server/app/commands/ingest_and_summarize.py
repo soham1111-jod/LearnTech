@@ -18,7 +18,7 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent"
 CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 3000))
-BATCH_SIZE = int(os.getenv("BATCH_SIZE", 5))
+BATCH_SIZE = int(os.getenv("BATCH_SIZE", 2))
 MIN_VIDEO_DURATION_SEC = 30
 
 # --- LOGGING ---
