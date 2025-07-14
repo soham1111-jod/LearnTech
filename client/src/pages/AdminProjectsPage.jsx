@@ -115,7 +115,7 @@ function AdminProjectsPage() {
   const handleApprove = async (id) => {
     setError('');
     try {
-      const res = await fetch(`/api/projects/${id}/approve`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${id}/approve`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
       });
