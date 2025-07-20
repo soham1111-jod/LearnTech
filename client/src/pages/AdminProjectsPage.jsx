@@ -140,7 +140,7 @@ function AdminProjectsPage() {
   const confirmDelete = async () => {
     setError('');
     try {
-      const res = await fetch(`/api/projects/${modal.id}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects/${modal.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
